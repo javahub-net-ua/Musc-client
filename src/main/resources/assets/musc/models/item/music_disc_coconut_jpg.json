@@ -1,6 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "musc:item/music_disc_coconut_jpg"
-  }
-}

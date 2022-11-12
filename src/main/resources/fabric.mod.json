@@ -15,6 +15,12 @@
   "icon": "assets/musc/icon.png",
   "environment": "client",
   "entrypoints": {
+    "preLaunch": [
+      "net.javahub.musc.prelaunch.MuscPreLaunch"
+    ],
+    "main": [
+      "net.javahub.musc.Musc"
+    ],
     "client": [
       "net.javahub.musc.client.MuscClient"
     ]
