@@ -1,6 +1,5 @@
 package net.javahub.musc.records;
 
-import net.javahub.musc.prelaunch.MuscPreLaunch;
 import net.minecraft.util.Identifier;
 
 public class Record {
@@ -12,10 +11,10 @@ public class Record {
     }
 
     public Identifier getSoundEventID() {
-        return new Identifier(MuscPreLaunch.MOD_ID, String.format("music_disc.%s", id.replace("@", ".")));
+        return new Identifier("musc", String.format("music_disc.%s", id.replace("@", ".")));
     }
 
     public Identifier getItemID() {
-        return new Identifier(MuscPreLaunch.MOD_ID, String.format("music_disc_%s", id.replace("@", "_")));
+        return new Identifier("musc", String.format("music_disc_%s", id.replace("@", "_")));
     }
 }

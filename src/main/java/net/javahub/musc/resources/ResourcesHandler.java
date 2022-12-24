@@ -1,0 +1,51 @@
+package net.javahub.musc.resources;
+
+import net.fabricmc.loader.api.FabricLoader;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static net.javahub.musc.Musc.LOGGER;
+import static net.javahub.musc.config.MuscConfig.CONFIG;
+
+public class ResourcesHandler {
+
+    private static final Path PATH = Path.of(FabricLoader.getInstance().getGameDir().toString(), "resources");
+    private static volatile Set<Path> resources = null;
+
+    private static Path downloadResources(String address) {
+        Path path = PATH.resolve(Path.of(Integer.toHexString(address.hashCode()) + ".zip"));
+        try {
+            URLConnection connection = new URL(address).openConnection();
+            connection.setConnectTimeout(4 * 1000);
+            try (InputStream in = connection.getInputStream()) {
+                Files.copy(in, path, StandardCopyOption.REPLACE_EXISTING);
+                LOGGER.info(address);
+            } catch (SocketTimeoutException e) {
+                LOGGER.warn(address + " - Connect time out! (4s)");
+            }
+        } catch (IOException ignored) {}
+        return path;
+    }
+
+    private static Set<Path> getResources() {
+        return CONFIG.servers.stream().map(ResourcesHandler::downloadResources).collect(Collectors.toSet());
+    }
+
+    public static Set<Path> getResourcePacks() {
+        if (Objects.nonNull(resources)) return resources;
+        synchronized(ResourcesHandler.class) {
+            if (Objects.isNull(resources)) resources = getResources();
+            return resources;
+        }
+    }
+}

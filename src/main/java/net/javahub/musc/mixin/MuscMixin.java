@@ -13,20 +13,20 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 @Environment(EnvType.CLIENT)
 @Mixin(ResourcePackManager.class)
 public abstract class MuscMixin {
+
     @Mutable
     @Final
     @Shadow
     private Set<ResourcePackProvider> providers;
 
     @Inject(method = "<init>*", at = @At("TAIL"))
-    private void registerLoader(CallbackInfo info) throws IOException {
+    private void registerLoader(CallbackInfo info) {
         this.providers = new HashSet<>(this.providers);
         this.providers.add(new MuscResourcesProvider());
     }

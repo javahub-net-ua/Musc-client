@@ -5,30 +5,37 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import static net.javahub.musc.Musc.LOGGER;
+
 public class RecordUtils {
 
-    public static Set<Record> getRecords() {
-        return new LinkedHashSet<>(parseMuscJson());
+    private static LinkedHashSet<Record> parseToRecords(String json) {
+        LinkedHashSet<Record> records = new Gson().fromJson(json, new TypeToken<LinkedHashSet<Record>>(){}.getType());
+        return Objects.nonNull(records) ? records : new LinkedHashSet<>();
     }
 
-    private static Set<Record> parseMuscJson() {
-        String json = null;
-        try (ZipFile zip = new ZipFile(".musc.zip")) {
-            Set<ZipEntry> entry = zip.stream()
-                    .filter(e -> e.getName().equals("musc.json")).collect(Collectors.toSet());
-            for (ZipEntry e: entry) {
-                json = new String(zip.getInputStream(e).readAllBytes(), StandardCharsets.UTF_8);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    private static String getMuscJson(Path pack) {
+        String json = "";
+        try (ZipFile zip = new ZipFile(pack.toFile())) {
+            ZipEntry entry = zip.stream().filter(e -> e.getName().equals("musc.json")).findAny().orElse(null);
+            if (entry != null) json = new String(zip.getInputStream(entry).readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException ignored) {
+            LOGGER.warn(pack.getFileName().toString());
         }
+        return json;
+    }
 
-        return new Gson().fromJson(json, new TypeToken<LinkedHashSet<Record>>(){}.getType());
+    public static LinkedHashSet<Record> getRecords(Set<Path> packs) {
+        return packs.stream()
+                .map(RecordUtils::getMuscJson)
+                .map(RecordUtils::parseToRecords)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

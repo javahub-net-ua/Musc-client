@@ -1,16 +1,24 @@
 package net.javahub.musc;
 
-import draylar.omegaconfiggui.OmegaConfigGui;
 import net.fabricmc.api.ModInitializer;
-import net.javahub.musc.discs.MuscItemsProvider;
-import net.javahub.musc.prelaunch.MuscPreLaunch;
+import net.javahub.musc.discs.MuscItems;
+import net.javahub.musc.records.Record;
+import net.javahub.musc.records.RecordUtils;
+import net.javahub.musc.resources.ResourcesHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Set;
 
 public class Musc implements ModInitializer {
 
+    public static final Logger LOGGER = LoggerFactory.getLogger("Musc");
+
     @Override
     public void onInitialize() {
-        MuscItemsProvider.initItems();
+        Set<Path> resources = ResourcesHandler.getResourcePacks();
+        Set<Record> records = RecordUtils.getRecords(resources);
+        records.forEach(MuscItems::registerRecord);
     }
 }
