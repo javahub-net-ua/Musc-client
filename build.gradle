@@ -7,21 +7,8 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
-    // Add repositories to retrieve artifacts from in here.
-    // You should only use this when depending on other mods because
-    // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-    // See https://docs.gradle.org/current/userguide/declaring_repositories.html
-    // for more information about repositories.
-    repositories {
-        maven { url 'https://jitpack.io' }
-    }
 
-    maven {
-        name = "Shedaniel's Maven"
-        url = "https://maven.shedaniel.me/"
-    }
-
-    // Optional dependency for Mod Menu - recommended for viewing your screen in development
+    maven { url "https://maven.shedaniel.me/" }
     maven {
         name = "TerraformersMC"
         url = "https://maven.terraformersmc.com/releases/"
@@ -34,14 +21,12 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-//    include("com.github.Draylar.omega-config:omega-config-base:${project.omega_config_version}")
-//    modImplementation("com.github.Draylar.omega-config:omega-config-base:${project.omega_config_version}")
+    // Cloth Config API
+    modImplementation("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}")
 
-    // ΩConfig GUI
-    include("com.github.Draylar.omega-config:omega-config-gui:${project.omega_config_version}")
-    modImplementation("com.github.Draylar.omega-config:omega-config-gui:${project.omega_config_version}")
     // Mod menu
-    modRuntimeOnly ("com.terraformersmc:modmenu:${project.modmenu_version}")
+    modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
+    modRuntimeOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
@@ -56,7 +41,7 @@ processResources {
     }
 }
 
-def targetJavaVersion = 18
+def targetJavaVersion = 17
 tasks.withType(JavaCompile).configureEach {
     // ensure that the encoding is set to UTF-8, no matter what the system default is
     // this fixes some edge cases with special characters not displaying correctly

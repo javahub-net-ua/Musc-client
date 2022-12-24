@@ -1,29 +1,27 @@
 package net.javahub.musc.config;
 
-import draylar.omegaconfig.OmegaConfig;
-import draylar.omegaconfig.api.Config;
+import com.terraformersmc.modmenu.api.ConfigScreenFactory;
+import com.terraformersmc.modmenu.api.ModMenuApi;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.ConfigData;
+import me.shedaniel.autoconfig.annotation.Config;
+import me.shedaniel.autoconfig.annotation.ConfigEntry;
+import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MuscConfig implements Config {
+@Config(name = "Musc")
+@Config.Gui.Background("minecraft:textures/block/sandstone_bottom.png")
+public class MuscConfig implements ConfigData, ModMenuApi {
 
-    public List<Listening> servers = new ArrayList<>();
+    @ConfigEntry.Gui.Excluded
+    public static final MuscConfig CONFIG = AutoConfig.register(MuscConfig.class, GsonConfigSerializer::new).getConfig();
 
-    public static class Listening {
-        public String hostname;
-        public int port;
-    }
+    public final List<String> servers = new ArrayList<>();
 
-    public String getName() {
-        return  "Musc";
-    }
-
-    public String getDirectory() {
-        return "/musc/";
-    }
-
-    public static MuscConfig init() {
-        return OmegaConfig.register(MuscConfig.class);
+    @Override
+    public ConfigScreenFactory<?> getModConfigScreenFactory() {
+        return parent -> AutoConfig.getConfigScreen(MuscConfig.class, parent).get();
     }
 }
