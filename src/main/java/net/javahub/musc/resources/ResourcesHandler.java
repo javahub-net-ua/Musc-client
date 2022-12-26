@@ -4,12 +4,12 @@ import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,15 +25,21 @@ public class ResourcesHandler {
     private static Path downloadResources(String address) {
         Path path = PATH.resolve(Path.of(Integer.toHexString(address.hashCode()) + ".zip"));
         try {
+            if (!Files.exists(PATH)) Files.createDirectory(PATH);
+            Files.deleteIfExists(path);
             URLConnection connection = new URL(address).openConnection();
-            connection.setConnectTimeout(4 * 1000);
+            connection.setConnectTimeout(10 * 1000);
+            LOGGER.info("trying to connect to " + address);
             try (InputStream in = connection.getInputStream()) {
-                Files.copy(in, path, StandardCopyOption.REPLACE_EXISTING);
-                LOGGER.info(address);
+                Files.copy(in, path);
+            } catch (ConnectException e) {
+                LOGGER.warn(address + " - Connect refused");
             } catch (SocketTimeoutException e) {
-                LOGGER.warn(address + " - Connect time out! (4s)");
+                LOGGER.warn(address + " - Connect time out! (10s)");
             }
-        } catch (IOException ignored) {}
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage());
+        }
         return path;
     }
 
