@@ -8,8 +8,9 @@
     "Nozistance"
   ],
   "contact": {
-    "website": "javahub.net.ua",
-    "repo": "https://github.com/javahub-net-ua/Musc-client"
+    "homepage": "https://javahub.net.ua",
+    "issues": "https://github.com/javahub-net-ua/Musc-client/issues",
+    "sources": "https://github.com/javahub-net-ua/Musc-client"
   },
   "license": "MIT",
   "icon": "assets/musc/icon.png",

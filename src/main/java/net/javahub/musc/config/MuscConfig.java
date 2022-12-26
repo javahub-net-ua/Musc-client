@@ -11,7 +11,7 @@ import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import java.util.ArrayList;
 import java.util.List;
 
-@Config(name = "Musc")
+@Config(name = "musc")
 @Config.Gui.Background("minecraft:textures/block/sandstone_bottom.png")
 public class MuscConfig implements ConfigData, ModMenuApi {
 
